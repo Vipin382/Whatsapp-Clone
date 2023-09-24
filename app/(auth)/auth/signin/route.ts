@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   const { email, password } = await req.json();
+  const requestUrl = new URL(req.url);
   const supabase = createRouteHandlerClient({ cookies });
 
   try {
@@ -19,7 +20,7 @@ export async function POST(req: Request) {
         status: error.status,
       });
     }
-    return NextResponse.redirect("http://localhost:3000/", {
+    return NextResponse.redirect(requestUrl.origin, {
       status: 301,
     });
   } catch (error) {

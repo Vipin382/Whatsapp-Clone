@@ -16,6 +16,7 @@ export async function POST(req: Request, res: Response) {
   //create user
   if (image && phone && email && password && username) {
     const imageId = randomUUID();
+    const requestUrl = new URL(req.url);
     try {
       const { error: ImageError } = await supabase.storage
         .from("profile")
@@ -44,7 +45,7 @@ export async function POST(req: Request, res: Response) {
           status: error.status,
         });
       }
-      return NextResponse.redirect("http://localhost:3000/signin");
+      return NextResponse.redirect(requestUrl.origin + "/signin");
     } catch (error) {
       console.log(error);
     }

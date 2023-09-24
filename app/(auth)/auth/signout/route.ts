@@ -5,11 +5,12 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
+  const requestUrl = new URL(req.url);
   const supabase = createRouteHandlerClient({ cookies });
 
   try {
     await supabase.auth.signOut();
-    return NextResponse.redirect(req.url + "/signin");
+    return NextResponse.redirect(requestUrl.origin + "/signin");
   } catch (error) {
     return NextResponse.json({ message: "Something Went Wrong", status: 404 });
   }
