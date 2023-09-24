@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("NEXT_PUBLIC_DATABASE_URL")
+}
+
+model User {
+  id      String  @id @default(uuid())
+  email   String  @unique
+  phone   String  @unique
+  name    String?
+  profile String?
+  about   String?
+
+  contacts Contact[] @relation("userContacts")
+
+  messages Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Contact {
+  id      String  @id @default(uuid())
+  name    String
+  about   String
+  phone   String
+  profile String?
+
+  userId String
+  user   User   @relation("userContacts", fields: [userId], references: [id], onDelete: Cascade)
+
+  messages Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([id, phone])
+  @@index([name, phone])
+}
+
+enum MessageType {
+  TEXT
+  VIDEO
+  AUDIO
+  PDF
+  DOCUMENT
+}
+
+model Message {
+  id   String      @id @default(uuid())
+  type MessageType @default(TEXT)
+
+  content String
+  url     String?
+
+  userOneId String
+  userOne   User   @relation(fields: [userOneId], references: [id], onDelete: Cascade)
+
+  useTwoId String
+  userTwo  Contact @relation(fields: [useTwoId], references: [id], onDelete: Cascade)
+
+  deleted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userOneId, useTwoId])
+  @@index([userOneId])
+}
