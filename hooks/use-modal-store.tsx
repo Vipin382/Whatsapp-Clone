@@ -2,6 +2,7 @@ import {
   getChatUserContact,
   getUserContact,
   getUserData,
+  getUserMessages,
 } from "@/app/api/getUserData";
 import { IObjectComponent, arrayToObjectArray } from "@/lib/arrayToObject";
 import { Database } from "@/types/supabase";
@@ -21,12 +22,14 @@ interface ModalData {
   contacts: IObjectComponent[] | [];
   loading: boolean;
   messages: messagesType[] | [];
+  chats: messagesType[] | null;
   isOpen: boolean;
   onClose: () => void;
   getUser: () => void;
   onOpen: (type: ModalType) => void;
   getContacts: () => void;
   getChatContacts: () => void;
+  getChats: (id: string) => void;
 }
 
 export const useModal = create<ModalData>((set) => ({
@@ -34,6 +37,7 @@ export const useModal = create<ModalData>((set) => ({
   conversation: [],
   chatContacts: [],
   contacts: [],
+  chats: [],
   type: null,
   loading: false,
   messages: [],
@@ -73,4 +77,15 @@ export const useModal = create<ModalData>((set) => ({
   onOpen: (type) => set({ isOpen: true, type: type }),
   isOpen: false,
   onClose: () => set({ isOpen: false, type: null }),
+  getChats: async (id) => {
+    set({ loading: true });
+    try {
+      const contactData = await getUserMessages({ userTwoId: id });
+      set({ chats: contactData });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      set({ loading: false });
+    }
+  },
 }));

@@ -15,6 +15,7 @@ type Props = {
   about?: string;
   image?: string;
   phone?: string;
+  OriginalId?: string;
 };
 
 const ContactItem = ({
@@ -22,6 +23,7 @@ const ContactItem = ({
   about = "available",
   image = "",
   phone = "",
+  OriginalId = "",
 }: Props) => {
   const { getChatContacts } = useModal();
 

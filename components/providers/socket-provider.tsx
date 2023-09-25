@@ -4,8 +4,8 @@ import React, { createContext, useEffect, useState, useContext } from "react";
 import { io as ClientIo } from "socket.io-client";
 
 export enum TypeOfMessage {
-  TEXT = "text",
-  AUDIO = "audio",
+  TEXT = "TEXT",
+  AUDIO = "AUDIO",
 }
 
 export type Ichat = {

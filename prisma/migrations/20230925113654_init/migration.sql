@@ -1,16 +1,19 @@
-/*
-  Warnings:
-
-  - Added the required column `updatedAt` to the `User` table without a default value. This is not possible if the table is not empty.
-
-*/
 -- CreateEnum
 CREATE TYPE "MessageType" AS ENUM ('TEXT', 'VIDEO', 'AUDIO', 'PDF', 'DOCUMENT');
 
--- AlterTable
-ALTER TABLE "User" ADD COLUMN     "about" TEXT,
-ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL;
+-- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
+    "name" TEXT,
+    "profile" TEXT,
+    "about" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Contact" (
@@ -18,12 +21,28 @@ CREATE TABLE "Contact" (
     "name" TEXT NOT NULL,
     "about" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
+    "profile" TEXT,
+    "originalId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "chatContactId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Contact_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ChatContact" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "about" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
+    "profile" TEXT,
+    "originalId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ChatContact_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -42,10 +61,22 @@ CREATE TABLE "Message" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_phone_key" ON "User"("phone");
+
+-- CreateIndex
 CREATE INDEX "Contact_name_phone_idx" ON "Contact"("name", "phone");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Contact_id_phone_key" ON "Contact"("id", "phone");
+
+-- CreateIndex
+CREATE INDEX "ChatContact_name_phone_idx" ON "ChatContact"("name", "phone");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ChatContact_id_phone_key" ON "ChatContact"("id", "phone");
 
 -- CreateIndex
 CREATE INDEX "Message_userOneId_idx" ON "Message"("userOneId");
@@ -57,10 +88,10 @@ CREATE UNIQUE INDEX "Message_userOneId_useTwoId_key" ON "Message"("userOneId", "
 ALTER TABLE "Contact" ADD CONSTRAINT "Contact_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Contact" ADD CONSTRAINT "Contact_chatContactId_fkey" FOREIGN KEY ("chatContactId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ChatContact" ADD CONSTRAINT "ChatContact_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Message" ADD CONSTRAINT "Message_userOneId_fkey" FOREIGN KEY ("userOneId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Message" ADD CONSTRAINT "Message_useTwoId_fkey" FOREIGN KEY ("useTwoId") REFERENCES "Contact"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Message" ADD CONSTRAINT "Message_useTwoId_fkey" FOREIGN KEY ("useTwoId") REFERENCES "ChatContact"("id") ON DELETE CASCADE ON UPDATE CASCADE;

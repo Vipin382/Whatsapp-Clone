@@ -6,6 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 import React from "react";
 import { IoIosArrowDown } from "react-icons/io";
 
@@ -68,7 +69,9 @@ const ChatMessage = ({ friend = false, message, time }: IChatMessage) => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <span className={cn("text-[10px] float-right ")}>{time}</span>
+          <span className={cn("text-[10px] float-right ")}>
+            {format(new Date(time), "HH:mm")}
+          </span>
         </div>
       </div>
     </div>

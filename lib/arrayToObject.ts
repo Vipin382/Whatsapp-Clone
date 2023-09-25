@@ -3,6 +3,7 @@ type contacts = {
   createdAt: string;
   id: string;
   name: string;
+  originalId: string;
   phone: string;
   profile: string | null;
   updatedAt: string;

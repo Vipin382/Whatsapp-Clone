@@ -44,3 +44,28 @@ export async function createUserChatContact(values: ContactInfo) {
     console.log(error);
   }
 }
+
+type IUserChat = {
+  userId: string;
+  content: string;
+};
+
+export async function createUserTextChat(values: IUserChat) {
+  try {
+    const response = await axios.post(
+      "/server/create/chat",
+      JSON.stringify(values),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (response.status === 200 || 201) {
+      console.log("done");
+      return response.data;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}

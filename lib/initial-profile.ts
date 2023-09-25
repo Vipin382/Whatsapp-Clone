@@ -18,6 +18,25 @@ export const initialProfile = async () => {
     },
   });
   if (profile) {
+    const exist = await db.contact.findFirst({
+      where: {
+        userId: user.id,
+        originalId: user.id,
+      },
+    });
+    if (!exist) {
+      const contact = await db.contact.create({
+        data: {
+          userId: user.id,
+          originalId: user.id,
+          phone: user.user_metadata.phone,
+          about: "",
+          name: user.user_metadata.name,
+          profile: user.user_metadata.image,
+        },
+      });
+    }
+
     return profile;
   }
 
@@ -34,11 +53,13 @@ export const initialProfile = async () => {
   const contact = await db.contact.create({
     data: {
       userId: user.id,
+      originalId: user.id,
       phone: newProfile.phone,
       about: newProfile.about ?? "",
       name: newProfile?.name ?? "",
       profile: newProfile?.profile,
     },
   });
+
   return newProfile;
 };

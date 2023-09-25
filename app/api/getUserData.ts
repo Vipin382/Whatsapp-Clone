@@ -57,3 +57,25 @@ export async function getChatUserContact() {
     console.log(error);
   }
 }
+
+type allMessages = Database["public"]["Tables"]["Message"]["Row"];
+
+export async function getUserMessages(values: { userTwoId: string }) {
+  try {
+    const response = await axios.post<allMessages[]>(
+      "/server/data/messages",
+      JSON.stringify(values),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (response.status === 200 || 201) {
+      console.log("done");
+      return response.data;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}

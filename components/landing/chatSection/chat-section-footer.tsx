@@ -40,6 +40,8 @@ import {
   TypeOfMessage,
   useSocket,
 } from "@/components/providers/socket-provider";
+import { createUserTextChat } from "@/app/api/createUserData";
+import { useModal } from "@/hooks/use-modal-store";
 
 function secondsToMinutesAndSeconds(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
@@ -55,13 +57,14 @@ const chatSchema = z.object({
   }),
 });
 
-const ChatSectionFooter = () => {
+const ChatSectionFooter = ({ userId }: { userId: string }) => {
   const inputref = React.useRef() as React.MutableRefObject<HTMLInputElement>;
   const [focus, setFocus] = React.useState<boolean>(true);
   const [open, setOpen] = React.useState<boolean>(false);
   const [mount, setMount] = React.useState<boolean>(false);
   const [record, setRecord] = React.useState<boolean>(false);
   const [audio, setAudio] = React.useState<string | undefined>();
+  const { getChats } = useModal();
   const { setChat } = useSocket();
 
   const {
@@ -92,19 +95,16 @@ const ChatSectionFooter = () => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof chatSchema>) {
+  async function onSubmit(values: z.infer<typeof chatSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    const message: Ichat = {
-      id: "",
-      time: format(new Date().getTime(), "HH:mm"),
-      type: TypeOfMessage.TEXT,
-      message: values.chatMessage,
-      recieverId: "",
-      frined: false,
-    };
+
+    await createUserTextChat({
+      userId: userId,
+      content: values.chatMessage,
+    });
     setFocus(true);
-    setChat((prev) => [...prev, message]);
+    getChats(userId);
     chatform.reset();
   }
 

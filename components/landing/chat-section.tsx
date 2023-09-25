@@ -30,12 +30,26 @@ import ChatMessage from "./messages/chat-message";
 import PageContainer from "../common/page-contsiner";
 import { TypeOfMessage, useSocket } from "../providers/socket-provider";
 import AudioMessage from "./messages/audio-message";
+import { useModal } from "@/hooks/use-modal-store";
 
-const ChatSection = ({ profile, name }: { profile: string; name: string }) => {
+const ChatSection = ({
+  profile,
+  name,
+  userId,
+}: {
+  profile: string;
+  name: string;
+  userId: string;
+}) => {
   const { search, setSearch, chatSettings, setChatSettings } =
     useNavbarAction();
+  const { chats, getChats, user } = useModal();
   const divRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
   const { chat, setChat } = useSocket();
+
+  React.useEffect(() => {
+    getChats(userId);
+  }, []);
 
   React.useEffect(() => {
     const scrollToBottom = () => {
@@ -58,21 +72,23 @@ const ChatSection = ({ profile, name }: { profile: string; name: string }) => {
             <div className="absolute bg-background3  contain  bg-contain mix-blend-overlay inset-0"></div>
             <ScrollArea className="w-full isloate h-full max-h-[89vh]">
               <PageContainer>
-                {chat?.map((item, index) => {
+                {chats?.map((item, index) => {
                   if (item?.type === TypeOfMessage.TEXT) {
                     return (
                       <ChatMessage
-                        message={item.message}
-                        time={item.time}
-                        friend={item.frined}
+                        key={index}
+                        message={item.content}
+                        time={item.createdAt}
+                        friend={item.userOneId !== user?.id}
                       />
                     );
                   } else if (item?.type === TypeOfMessage.AUDIO) {
                     return (
                       <AudioMessage
-                        audio={item.message}
-                        time={item.time}
-                        friend={item.frined}
+                        key={index}
+                        audio={item.url!}
+                        time={item.createdAt}
+                        friend={item.userOneId !== user?.id}
                       />
                     );
                   }
@@ -115,7 +131,7 @@ const ChatSection = ({ profile, name }: { profile: string; name: string }) => {
           </ContextMenuContent>
         </ContextMenu>
 
-        <ChatSectionFooter />
+        <ChatSectionFooter userId={userId} />
       </section>
       <div
         className={cn(

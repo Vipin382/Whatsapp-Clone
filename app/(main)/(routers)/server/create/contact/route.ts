@@ -32,6 +32,7 @@ export async function POST(request: Request) {
       data: {
         phone: phone,
         about: contactdata.about ?? "",
+        originalId: contactdata.id,
         name: name,
         profile: contactdata.profile,
         user: { connect: { id: user.id } },

@@ -21,18 +21,20 @@ model User {
   contacts    Contact[]     @relation("userContacts")
   chatContact ChatContact[]
 
-  messages Message[]
+  sendMessage     Message[] @relation("sendMessage")
+  recievedMessage Message[] @relation("recievedMessage")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Contact {
-  id      String  @id @default(uuid())
-  name    String
-  about   String
-  phone   String
-  profile String?
+  id         String  @id @default(uuid())
+  name       String
+  about      String
+  phone      String
+  profile    String?
+  originalId String
 
   userId String
   user   User   @relation("userContacts", fields: [userId], references: [id], onDelete: Cascade)
@@ -45,16 +47,15 @@ model Contact {
 }
 
 model ChatContact {
-  id      String  @id @default(uuid())
-  name    String
-  about   String
-  phone   String
-  profile String?
+  id         String  @id @default(uuid())
+  name       String
+  about      String
+  phone      String
+  profile    String?
+  originalId String
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  messages Message[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -79,16 +80,15 @@ model Message {
   url     String?
 
   userOneId String
-  userOne   User   @relation(fields: [userOneId], references: [id], onDelete: Cascade)
+  userOne   User   @relation("sendMessage", fields: [userOneId], references: [id], onDelete: Cascade)
 
   useTwoId String
-  userTwo  ChatContact @relation(fields: [useTwoId], references: [id], onDelete: Cascade)
+  userTwo  User   @relation("recievedMessage", fields: [useTwoId], references: [id], onDelete: Cascade)
 
   deleted Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userOneId, useTwoId])
-  @@index([userOneId])
+  @@index([userOneId, useTwoId])
 }

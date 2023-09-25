@@ -80,6 +80,7 @@ const LandingPage = () => {
                                 about={item.about}
                                 image={item.profile!}
                                 phone={item.phone}
+                                OriginalId={item.originalId}
                               />
                             );
                           })}
@@ -159,7 +160,11 @@ const LandingPage = () => {
                 className="w-full h-full"
                 value={index.toString()}
               >
-                <ChatSection name={item.name} profile={item.profile!} />
+                <ChatSection
+                  name={item.name}
+                  userId={item.originalId}
+                  profile={item.profile!}
+                />
               </TabsContent>
             );
           })}
