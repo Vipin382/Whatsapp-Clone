@@ -64,7 +64,7 @@ const ChatSectionFooter = ({ userId }: { userId: string }) => {
   const [mount, setMount] = React.useState<boolean>(false);
   const [record, setRecord] = React.useState<boolean>(false);
   const [audio, setAudio] = React.useState<string | undefined>();
-  const { getChats } = useModal();
+  const { getChats, setAllChats, user, chats } = useModal();
   const { setChat } = useSocket();
 
   const {
@@ -96,16 +96,25 @@ const ChatSectionFooter = ({ userId }: { userId: string }) => {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof chatSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-
+    const newD = {
+      content: values.chatMessage,
+      createdAt: new Date().toString(),
+      deleted: false,
+      id: "",
+      type: TypeOfMessage.TEXT,
+      updatedAt: new Date().toString(),
+      url: null,
+      userOneId: user?.id as string,
+      useTwoId: userId,
+    };
+    setAllChats(chats!, newD);
+    chatform.reset();
     await createUserTextChat({
       userId: userId,
-      content: values.chatMessage,
+      content: newD["content"],
     });
     setFocus(true);
     getChats(userId);
-    chatform.reset();
   }
 
   function onAudioSubmit(values: string | undefined) {

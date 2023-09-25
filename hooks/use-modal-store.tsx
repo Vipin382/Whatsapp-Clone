@@ -14,6 +14,36 @@ type messagesType = Database["public"]["Tables"]["Message"]["Row"];
 export type ModalType = "openPicture" | "takePicture" | "createContact";
 type chatContacts = Database["public"]["Tables"]["ChatContact"]["Row"];
 
+export enum TypeOfMessage {
+  TEXT = "TEXT",
+  AUDIO = "AUDIO",
+}
+
+export type Ichat = {
+  id: string;
+  time: string;
+  type: TypeOfMessage;
+  message: string;
+  recieverId: string;
+  frined: boolean;
+};
+export type IAudio = {
+  id: string;
+  type: TypeOfMessage;
+  time: string;
+  message: string;
+  recieverId: string;
+  frined: boolean;
+};
+
+type IMessageArray = Ichat | IAudio | null;
+type SocketContextType = {
+  socket: any | null;
+  isConnected: boolean;
+  chat: IMessageArray[];
+  setChat: React.Dispatch<React.SetStateAction<IMessageArray[]>>;
+};
+
 interface ModalData {
   user: userType | null;
   type: ModalType | null;
@@ -21,7 +51,6 @@ interface ModalData {
   chatContacts: chatContacts[] | [];
   contacts: IObjectComponent[] | [];
   loading: boolean;
-  messages: messagesType[] | [];
   chats: messagesType[] | null;
   isOpen: boolean;
   onClose: () => void;
@@ -30,6 +59,7 @@ interface ModalData {
   getContacts: () => void;
   getChatContacts: () => void;
   getChats: (id: string) => void;
+  setAllChats: (current: messagesType[], values: messagesType) => void;
 }
 
 export const useModal = create<ModalData>((set) => ({
@@ -40,7 +70,6 @@ export const useModal = create<ModalData>((set) => ({
   chats: [],
   type: null,
   loading: false,
-  messages: [],
   getUser: async () => {
     set({ loading: true });
     try {
@@ -87,5 +116,8 @@ export const useModal = create<ModalData>((set) => ({
     } finally {
       set({ loading: false });
     }
+  },
+  setAllChats: (current, values) => {
+    set({ chats: [...current, values] });
   },
 }));
