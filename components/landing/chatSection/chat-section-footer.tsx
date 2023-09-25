@@ -254,6 +254,7 @@ const ChatSectionFooter = ({ userId }: { userId: string }) => {
                   <FormItem className="w-full">
                     <FormControl>
                       <ChatInput
+                        onKeyDown={() => setFocus(false)}
                         className="text-sm"
                         {...field}
                         Icon={
