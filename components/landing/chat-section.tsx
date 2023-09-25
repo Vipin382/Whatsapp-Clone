@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/context-menu";
 import ChatMessage from "./messages/chat-message";
 import PageContainer from "../common/page-contsiner";
-import { TypeOfMessage, useSocket } from "../providers/socket-provider";
+import { TypeOfMessage } from "../providers/socket-provider";
 import AudioMessage from "./messages/audio-message";
 import { useModal } from "@/hooks/use-modal-store";
 
@@ -45,7 +45,6 @@ const ChatSection = ({
     useNavbarAction();
   const { chats, getChats, user } = useModal();
   const divRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
-  const { chat, setChat } = useSocket();
 
   React.useEffect(() => {
     getChats(userId);
@@ -56,7 +55,7 @@ const ChatSection = ({
       divRef.current.scrollIntoView({ behavior: "smooth" });
     };
     scrollToBottom();
-  }, [chat]);
+  }, [chats]);
   return (
     <div className="grid h-full grid-cols-3">
       <section
@@ -70,7 +69,7 @@ const ChatSection = ({
         <ContextMenu>
           <ContextMenuTrigger className="flex w-full h-full items-center  justify-center rounded-md text-sm">
             <div className="absolute bg-background3  contain  bg-contain mix-blend-overlay inset-0"></div>
-            <ScrollArea className="w-full isloate h-full max-h-[89vh]">
+            <ScrollArea className="w-full isloate h-full max-h-[80vh]">
               <PageContainer>
                 {chats?.map((item, index) => {
                   if (item?.type === TypeOfMessage.TEXT) {
