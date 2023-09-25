@@ -36,3 +36,24 @@ export async function getUserContact() {
     console.log(error);
   }
 }
+
+type chatContacts = Database["public"]["Tables"]["ChatContact"]["Row"];
+
+export async function getChatUserContact() {
+  try {
+    const response = await axios.post<chatContacts[]>(
+      "/server/data/chatContacts",
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (response.status === 200 || 201) {
+      console.log("done");
+      return response.data;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}

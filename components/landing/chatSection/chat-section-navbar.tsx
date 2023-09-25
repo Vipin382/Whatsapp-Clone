@@ -17,14 +17,20 @@ import { BiSearch } from "react-icons/bi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useSocket } from "@/components/providers/socket-provider";
 
-const ChatSectionNavbar = () => {
+const ChatSectionNavbar = ({
+  profile,
+  name,
+}: {
+  profile: string;
+  name: string;
+}) => {
   const { setSearch, setChatSettings } = useNavbarAction();
   const { isConnected } = useSocket();
   return (
     <nav className="left-0 z-[1] right-0 top-0 absolute flex px-4 items-center h-[57.5px] bg-mainPrimaryDark">
       <div className="flex justify-between w-full items-center">
         <div className="flex items-center w-full gap-x-3 justify-center">
-          <UserAvatar size={30} hover={false} src={""} />
+          <UserAvatar size={30} hover={false} src={profile} />
           <div
             onClick={() => {
               setChatSettings(true);
@@ -33,7 +39,7 @@ const ChatSectionNavbar = () => {
             className="flex-1 cursor-pointer h-full w-full"
           >
             <div className="flex items-center space-x-2">
-              <h1 className="text-xl">Pranshu</h1>
+              <h1 className="text-xl">{name}</h1>
               <Badge
                 className={cn(
                   "text-[10px] translate-y-[2px] border-none px-2 py-[2px] text-white",

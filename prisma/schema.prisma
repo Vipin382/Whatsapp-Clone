@@ -18,7 +18,8 @@ model User {
   profile String?
   about   String?
 
-  contacts Contact[] @relation("userContacts")
+  contacts    Contact[]     @relation("userContacts")
+  chatContact ChatContact[]
 
   messages Message[]
 
@@ -35,6 +36,23 @@ model Contact {
 
   userId String
   user   User   @relation("userContacts", fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([id, phone])
+  @@index([name, phone])
+}
+
+model ChatContact {
+  id      String  @id @default(uuid())
+  name    String
+  about   String
+  phone   String
+  profile String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   messages Message[]
 
@@ -64,7 +82,7 @@ model Message {
   userOne   User   @relation(fields: [userOneId], references: [id], onDelete: Cascade)
 
   useTwoId String
-  userTwo  Contact @relation(fields: [useTwoId], references: [id], onDelete: Cascade)
+  userTwo  ChatContact @relation(fields: [useTwoId], references: [id], onDelete: Cascade)
 
   deleted Boolean @default(false)
 

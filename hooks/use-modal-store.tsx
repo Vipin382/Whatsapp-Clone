@@ -1,4 +1,8 @@
-import { getUserContact, getUserData } from "@/app/api/getUserData";
+import {
+  getChatUserContact,
+  getUserContact,
+  getUserData,
+} from "@/app/api/getUserData";
 import { IObjectComponent, arrayToObjectArray } from "@/lib/arrayToObject";
 import { Database } from "@/types/supabase";
 import { create } from "zustand";
@@ -7,12 +11,13 @@ type userType = Database["public"]["Tables"]["User"]["Row"];
 type conversationType = Database["public"]["Tables"]["Contact"]["Row"];
 type messagesType = Database["public"]["Tables"]["Message"]["Row"];
 export type ModalType = "openPicture" | "takePicture" | "createContact";
-type contactType = Database["public"]["Tables"]["Contact"]["Row"];
+type chatContacts = Database["public"]["Tables"]["ChatContact"]["Row"];
 
 interface ModalData {
   user: userType | null;
   type: ModalType | null;
   conversation: conversationType[] | [];
+  chatContacts: chatContacts[] | [];
   contacts: IObjectComponent[] | [];
   loading: boolean;
   messages: messagesType[] | [];
@@ -21,11 +26,13 @@ interface ModalData {
   getUser: () => void;
   onOpen: (type: ModalType) => void;
   getContacts: () => void;
+  getChatContacts: () => void;
 }
 
 export const useModal = create<ModalData>((set) => ({
   user: null,
   conversation: [],
+  chatContacts: [],
   contacts: [],
   type: null,
   loading: false,
@@ -46,6 +53,17 @@ export const useModal = create<ModalData>((set) => ({
     try {
       const contactData = await getUserContact();
       set({ contacts: arrayToObjectArray(contactData!) });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      set({ loading: false });
+    }
+  },
+  getChatContacts: async () => {
+    set({ loading: true });
+    try {
+      const contactData = await getChatUserContact();
+      set({ chatContacts: contactData });
     } catch (error) {
       console.log(error);
     } finally {

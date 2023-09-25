@@ -31,7 +31,7 @@ import PageContainer from "../common/page-contsiner";
 import { TypeOfMessage, useSocket } from "../providers/socket-provider";
 import AudioMessage from "./messages/audio-message";
 
-const ChatSection = () => {
+const ChatSection = ({ profile, name }: { profile: string; name: string }) => {
   const { search, setSearch, chatSettings, setChatSettings } =
     useNavbarAction();
   const divRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
@@ -52,11 +52,11 @@ const ChatSection = () => {
           chatSettings ? "col-span-2" : ""
         )}
       >
-        <ChatSectionNavbar />
+        <ChatSectionNavbar name={name} profile={profile} />
         <ContextMenu>
-          <ContextMenuTrigger className="flex w-full  h-full items-center  justify-center rounded-md text-sm">
-            <div className="absolute bg-background3 contain  bg-contain mix-blend-overlay inset-0"></div>
-            <ScrollArea className="w-full isloate h-[608px]">
+          <ContextMenuTrigger className="flex w-full h-full items-center  justify-center rounded-md text-sm">
+            <div className="absolute bg-background3  contain  bg-contain mix-blend-overlay inset-0"></div>
+            <ScrollArea className="w-full isloate h-full max-h-[89vh]">
               <PageContainer>
                 {chat?.map((item, index) => {
                   if (item?.type === TypeOfMessage.TEXT) {

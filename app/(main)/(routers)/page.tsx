@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import FormCustomButton from "@/components/common/form/formCustomButton";
 import PageContainer from "@/components/common/page-contsiner";
 import { Loader2Icon, Lock } from "lucide-react";
+import { SiWhatsapp } from "react-icons/si";
 import Image from "next/image";
 import React from "react";
 import ListItem from "@/components/landing/list-item";
@@ -25,7 +26,14 @@ const ChatSection = dynamic(() => import("@/components/landing/chat-section"), {
 
 const LandingPage = () => {
   const { profile, contactAside, setContactAside } = useNavbarAction();
-  const { user, contacts, getUser, getContacts } = useModal();
+  const {
+    user,
+    contacts,
+    getUser,
+    chatContacts,
+    getContacts,
+    getChatContacts,
+  } = useModal();
 
   /**
    *
@@ -33,15 +41,16 @@ const LandingPage = () => {
   React.useEffect(() => {
     getUser();
     getContacts();
+    getChatContacts();
   }, []);
 
   /**
    *
    */
-  if (user !== null) {
+  if (user !== null && chatContacts) {
     return (
       <Tabs defaultValue="landing" className="w-full flex h-full">
-        <aside className=" w-full overflow-hidden min-w-[450px] max-w-[450px]  relative bg-mainSecondaryDark h-full">
+        <aside className=" w-full  overflow-hidden min-w-[450px] max-w-[450px]  relative bg-mainSecondaryDark h-full">
           {profile ? (
             <ProfileSidebar
               image={user?.profile!}
@@ -53,7 +62,7 @@ const LandingPage = () => {
               {contactAside ? (
                 <>
                   <ContactNavbar setContactAside={setContactAside} />
-                  <ScrollArea className="mt-[90px] h-[633px] flex flex-col">
+                  <ScrollArea className="mt-[90px] h-full flex flex-col">
                     {contacts.map((item, index) => {
                       return (
                         <div key={index}>
@@ -70,6 +79,7 @@ const LandingPage = () => {
                                 name={item.name}
                                 about={item.about}
                                 image={item.profile!}
+                                phone={item.phone}
                               />
                             );
                           })}
@@ -81,25 +91,28 @@ const LandingPage = () => {
               ) : (
                 <>
                   (<PrimaryNavbar image={user?.profile!} />
-                  <section className="overflow-hidden mt-[104px]">
+                  <section className=" h-full mt-[104px]">
                     <TabsList className="w-full relative p-0 h-full bg-transparent">
-                      <ScrollArea className="flex xl:h-[619px] w-full flex-col">
+                      <ScrollArea className="flex h-full max-h-[95vh] w-full flex-col">
                         <TabsTrigger className="hidden" value="landing">
                           default
                         </TabsTrigger>
-                        {[
-                          1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-                        ].map((item, index) => {
+                        {chatContacts.map((item, index) => {
                           return (
                             <TabsTrigger
                               className="flex cursor-pointer w-full items-center active:border-b hover:bg-mainPrimaryDark group h-[72px] gap-x-4 data-[state=active]:bg-mainPrimaryDark bg-transparent px-5"
                               key={index}
                               value={index.toString()}
                             >
-                              <ListItem />
+                              <ListItem
+                                profile={item.profile!}
+                                about={item.about}
+                                name={item.name}
+                              />
                             </TabsTrigger>
                           );
                         })}
+                        <div className="h-[140px]"></div>
                       </ScrollArea>
                     </TabsList>
                   </section>
@@ -139,24 +152,39 @@ const LandingPage = () => {
               </div>
             </PageContainer>
           </TabsContent>
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].map(
-            (item, index) => {
-              return (
-                <TabsContent
-                  key={index}
-                  className="w-full h-full"
-                  value={index.toString()}
-                >
-                  <ChatSection />
-                </TabsContent>
-              );
-            }
-          )}
+          {chatContacts.map((item, index) => {
+            return (
+              <TabsContent
+                key={index}
+                className="w-full h-full"
+                value={index.toString()}
+              >
+                <ChatSection name={item.name} profile={item.profile!} />
+              </TabsContent>
+            );
+          })}
         </section>
       </Tabs>
     );
   }
-  return <div>Hello World</div>;
+  return (
+    <div className="h-full flex justify-center items-center">
+      <div className="gap-y-5 w-full max-w-[300px] flex flex-col">
+        <div>
+          <div className="flex justify-center items-center relative after:content-[''] after:top-0 after:left-0 after:bg-white after:w-[100px] after:bottom-0 after:mix-blend-multiply after:absolute after:h-full py-2">
+            <SiWhatsapp size={50} className="text-zinc-700" />
+          </div>
+          <div className="w-full h-[2px] mt-2 bg-zinc-700"></div>
+        </div>
+        <h1 className="w-full text-md font-thin flex justify-center">
+          WhatsApp
+        </h1>
+        <p className="inline-flex gap-x-1 text-sm font-light text-white/30 items-center justify-center text-center w-full">
+          <Lock size={15} /> End-to-end encrypted
+        </p>
+      </div>
+    </div>
+  );
 };
 
 export default LandingPage;
