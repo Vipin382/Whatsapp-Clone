@@ -61,6 +61,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     );
 
     socketInstance.on("connect", () => {
+      console.log("Yes");
       setIsConnected(true);
     });
 
@@ -68,6 +69,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       setIsConnected(false);
     });
 
+    setSocket(socketInstance);
     return () => {
       socketInstance.disconnect();
     };

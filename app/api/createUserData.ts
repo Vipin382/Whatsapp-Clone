@@ -52,8 +52,8 @@ type IUserChat = {
 
 export async function createUserTextChat(values: IUserChat) {
   try {
-    const response = await axios.post(
-      "/server/create/chat",
+    const Socketresponse = await axios.post(
+      "/api/socket/messages",
       JSON.stringify(values),
       {
         headers: {
@@ -61,9 +61,9 @@ export async function createUserTextChat(values: IUserChat) {
         },
       }
     );
-    if (response.status === 200 || 201) {
+    if (Socketresponse.status === 200 || 201) {
       console.log("done");
-      return response.data;
+      return Socketresponse.data;
     }
   } catch (error) {
     console.log(error);

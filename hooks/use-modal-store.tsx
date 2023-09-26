@@ -8,11 +8,14 @@ import { IObjectComponent, arrayToObjectArray } from "@/lib/arrayToObject";
 import { Database } from "@/types/supabase";
 import { create } from "zustand";
 
-type userType = Database["public"]["Tables"]["User"]["Row"];
-type conversationType = Database["public"]["Tables"]["Contact"]["Row"];
-type messagesType = Database["public"]["Tables"]["Message"]["Row"];
+export type userType = Database["public"]["Tables"]["User"]["Row"];
+export type conversationType = Database["public"]["Tables"]["Contact"]["Row"];
+export type messagesType = Omit<
+  Database["public"]["Tables"]["Message"]["Row"],
+  "updatedAt"
+>;
 export type ModalType = "openPicture" | "takePicture" | "createContact";
-type chatContacts = Database["public"]["Tables"]["ChatContact"]["Row"];
+export type chatContacts = Database["public"]["Tables"]["ChatContact"]["Row"];
 
 export enum TypeOfMessage {
   TEXT = "TEXT",

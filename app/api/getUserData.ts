@@ -58,7 +58,10 @@ export async function getChatUserContact() {
   }
 }
 
-type allMessages = Database["public"]["Tables"]["Message"]["Row"];
+type allMessages = Omit<
+  Database["public"]["Tables"]["Message"]["Row"],
+  "updatedAt"
+>;
 
 export async function getUserMessages(values: { userTwoId: string }) {
   try {

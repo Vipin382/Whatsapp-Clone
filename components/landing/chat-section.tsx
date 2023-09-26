@@ -31,6 +31,7 @@ import PageContainer from "../common/page-contsiner";
 import { TypeOfMessage } from "../providers/socket-provider";
 import AudioMessage from "./messages/audio-message";
 import { useModal } from "@/hooks/use-modal-store";
+import { useChatSocket } from "@/hooks/use-chat.sockets";
 
 const ChatSection = ({
   profile,

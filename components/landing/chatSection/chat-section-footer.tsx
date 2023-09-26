@@ -36,12 +36,12 @@ import { MdDelete } from "react-icons/md";
 import { AiOutlinePauseCircle } from "react-icons/ai";
 import {
   IAudio,
-  Ichat,
   TypeOfMessage,
   useSocket,
 } from "@/components/providers/socket-provider";
 import { createUserTextChat } from "@/app/api/createUserData";
-import { useModal } from "@/hooks/use-modal-store";
+import { messagesType, useModal } from "@/hooks/use-modal-store";
+import { useChatSocket } from "@/hooks/use-chat.sockets";
 
 function secondsToMinutesAndSeconds(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
@@ -64,7 +64,7 @@ const ChatSectionFooter = ({ userId }: { userId: string }) => {
   const [mount, setMount] = React.useState<boolean>(false);
   const [record, setRecord] = React.useState<boolean>(false);
   const [audio, setAudio] = React.useState<string | undefined>();
-  const { getChats, setAllChats, user, chats } = useModal();
+  const { setAllChats, user, chats } = useModal();
   const { setChat } = useSocket();
 
   const {
@@ -94,6 +94,9 @@ const ChatSectionFooter = ({ userId }: { userId: string }) => {
     },
   });
 
+  const queryKey = `chatPlatform`;
+  useChatSocket({ chatKey: queryKey, to: userId });
+
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof chatSchema>) {
     const newD = {
@@ -107,14 +110,12 @@ const ChatSectionFooter = ({ userId }: { userId: string }) => {
       userOneId: user?.id as string,
       useTwoId: userId,
     };
-    setAllChats(chats!, newD);
     chatform.reset();
     await createUserTextChat({
       userId: userId,
       content: newD["content"],
     });
     setFocus(true);
-    getChats(userId);
   }
 
   function onAudioSubmit(values: string | undefined) {
